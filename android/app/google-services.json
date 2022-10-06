@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "292137054109",
+    "project_id": "bsii-947af",
+    "storage_bucket": "bsii-947af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292137054109:android:aa13fc85b8ac643cb44974",
+        "android_client_info": {
+          "package_name": "com.markbsi.bsi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "292137054109-j7mgba4lgnlivhifppbmrsgjrr2nlks7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeYnTRI86KCKqlkdyTcpJTCo6AEgUVrgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "292137054109-j7mgba4lgnlivhifppbmrsgjrr2nlks7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
