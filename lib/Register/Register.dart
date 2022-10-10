@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:bsi/Firebase/Firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:bsi/Login/Login.dart';
+import 'package:crypto/crypto.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -12,6 +15,8 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   String login = "";
   String pass = "";
+  bool? first=true, second=false;
+  var passh;
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +110,48 @@ class _RegisterState extends State<Register> {
               ),
               const SizedBox(height: 20,),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: 150,
+                    child: CheckboxListTile(
+                      title: const Text("SHA512"),
+                      value: first,
+                      onChanged: (newValue) {
+                        setState(() {
+                          first = newValue;
+                          if(second==true) {
+                            second=false;
+                          } else {
+                            second=true;
+                          }
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                  ),
+                  Container(
+                    width: 150,
+                    child: CheckboxListTile(
+                      title: const Text("HMAC"),
+                      value: second,
+                      onChanged: (newValue) {
+                        setState(() {
+                          second = newValue;
+                          if(first==true) {
+                            first=false;
+                          } else {
+                            first=true;
+                          }
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.platform,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20,),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   GestureDetector(
@@ -128,7 +175,13 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                     onTap: () async{
-                      await AddUserToDatabase().updateUserData(login, pass);
+                      if(first==true) {
+                        await AddUserToDatabase().updateUserData(login, sha512.convert(utf8.encode(pass)).toString());
+                      } else if(second==true) {
+                        List<int> messageBytes = utf8.encode(pass);
+                        Hmac hmac = Hmac(sha256, base64.decode('I dont know'));
+                        await AddUserToDatabase().updateUserData(login, base64.encode(hmac.convert(messageBytes).bytes));
+                      }
                     },
                   ),
                   const SizedBox(width: 40,),
