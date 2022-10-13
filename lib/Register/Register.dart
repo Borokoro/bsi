@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bsi/Firebase/Firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:bsi/Login/Login.dart';
 import 'package:crypto/crypto.dart';
+import 'package:bsi/Pepper.dart' as variable;
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -15,8 +17,24 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   String login = "";
   String pass = "";
+  String salt="";
   bool? first=true, second=false;
   var passh;
+
+  String hash_sha512(){
+    String? hashed_pass;
+    hashed_pass=sha512.convert(utf8.encode(pass+salt+variable.pepper)).toString();
+    return hashed_pass;
+  }
+
+  String salt_generate(){
+    Random rnd = Random();
+    String chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890!@#%^&*';
+    String randomString = String.fromCharCodes(List.generate(
+        20, (index) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+    return randomString;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,11 +194,12 @@ class _RegisterState extends State<Register> {
                     ),
                     onTap: () async{
                       if(first==true) {
-                        await AddUserToDatabase().updateUserData(login, sha512.convert(utf8.encode(pass)).toString());
+                        salt=salt_generate();
+                        await AddUserToDatabase().updateUserData(login, hash_sha512(), salt);
                       } else if(second==true) {
                         List<int> messageBytes = utf8.encode(pass);
                         Hmac hmac = Hmac(sha256, base64.decode('I dont know'));
-                        await AddUserToDatabase().updateUserData(login, base64.encode(hmac.convert(messageBytes).bytes));
+                       // await AddUserToDatabase().updateUserData(login, base64.encode(hmac.convert(messageBytes).bytes));
                       }
                     },
                   ),

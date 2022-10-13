@@ -1,6 +1,7 @@
 import 'package:bsi/Firebase/Firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:bsi/Register/Register.dart';
+import 'package:bsi/Pepper.dart' as variable;
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -13,6 +14,9 @@ class _LoginState extends State<Login> {
   String login = "";
   String pass = "";
 
+  Future<bool> tryLogin() async {
+    return true;
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +132,7 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     onTap: () async{
-                      await AddUserToDatabase().updateUserData(login, pass);
+                     // await AddUserToDatabase().updateUserData(login, pass);
                     },
                   ),
                   const SizedBox(width: 40,),
