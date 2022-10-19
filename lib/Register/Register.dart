@@ -48,7 +48,7 @@ class _RegisterState extends State<Register> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                'Regiser',
+                'Register',
                 style: TextStyle(
                     fontSize: 40,
                     color: Colors.white,
@@ -195,7 +195,7 @@ class _RegisterState extends State<Register> {
                     onTap: () async{
                       if(first==true) {
                         salt=salt_generate();
-                        await AddUserToDatabase().updateUserData(login, hash_sha512(), salt);
+                        await AddUserToDatabase().updateUserData(login, hash_sha512(), salt, "sha512");
                       } else if(second==true) {
                         List<int> messageBytes = utf8.encode(pass);
                         Hmac hmac = Hmac(sha256, base64.decode('I dont know'));
