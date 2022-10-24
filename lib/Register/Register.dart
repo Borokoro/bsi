@@ -209,6 +209,13 @@ class _RegisterState extends State<Register> {
                           await AddUserToDatabase().setUserData(login,
                               hash_HMAC(), salt, "HMAC");
                         }
+                        Fluttertoast.showToast(
+                          toastLength: Toast.LENGTH_SHORT,
+                          msg: 'User added',
+                          webBgColor: '#00FF00',
+                          textColor: Colors.white,
+                          webPosition: 'center',
+                        );
                       }
                       else{
                         Fluttertoast.showToast(

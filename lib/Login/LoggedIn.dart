@@ -115,34 +115,34 @@ class _LoggedInState extends State<LoggedIn> {
     return Scaffold(
           body: ListView(
             children: [
-              SizedBox(height: 20,),
+              const SizedBox(height: 20,),
               for (int a = 0; a < salt.length; a++)
                 Container(
                   height: 80,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         width: 20,
                         child: Text(
                           '${a + 1}:   ',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               fontSize: 20),
                         ),
                       ),
                       Container(
-                        width: 1600,
+                        width: 800,
                         child: Text(
                           '    ${pom[a]}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               fontSize: 20),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
                       ),
                       Container(
@@ -164,17 +164,17 @@ class _LoggedInState extends State<LoggedIn> {
                             }
                           },
                           icon: passVisible[a] == false
-                              ? Icon(Icons.admin_panel_settings)
-                              : Icon(Icons.admin_panel_settings_outlined),
+                              ? const Icon(Icons.admin_panel_settings)
+                              : const Icon(Icons.admin_panel_settings_outlined),
                           style: ElevatedButton.styleFrom(
-                            textStyle: TextStyle(fontSize: 20),
+                            textStyle: const TextStyle(fontSize: 20),
                             backgroundColor: passVisible[a] == false
                                 ? Colors.transparent
                                 : Colors.red,
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(20),
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(20),
                           ),
-                          label: Text(""),
+                          label: const Text(""),
                         ),
                       ),
                     ],
@@ -184,7 +184,7 @@ class _LoggedInState extends State<LoggedIn> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   const Text(
@@ -215,7 +215,7 @@ class _LoggedInState extends State<LoggedIn> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   GestureDetector(
@@ -258,12 +258,12 @@ class _LoggedInState extends State<LoggedIn> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Row(
@@ -285,11 +285,11 @@ class _LoggedInState extends State<LoggedIn> {
                         alignment: Alignment.topCenter,
                         child: Column(
                           children: [
-                            Text(
+                            const Text(
                               'Change',
                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30),
                             ),
-                            Text(
+                            const Text(
                               'Password',
                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30),
                             ),

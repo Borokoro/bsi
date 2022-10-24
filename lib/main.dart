@@ -20,16 +20,3 @@ Future main() async {
       ));
 }
 
-class Addd extends StatefulWidget {
-  const Addd({Key? key}) : super(key: key);
-
-  @override
-  State<Addd> createState() => _AdddState();
-}
-
-class _AdddState extends State<Addd> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}

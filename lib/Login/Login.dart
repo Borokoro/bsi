@@ -172,18 +172,19 @@ class _LoginState extends State<Login> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => LoggedIn(user: login)));
-                          } else
+                          } else {
                             Fluttertoast.showToast(
+                              toastLength: Toast.LENGTH_SHORT,
                               msg: 'Something went wrong',
-                              backgroundColor: Colors.red,
+                              webBgColor: '#FF0000',
                               textColor: Colors.white,
-                              gravity: ToastGravity.BOTTOM,
+                              webPosition: 'center',
                             );
+                          }
 
                         }
                         else{
                           if (hash_HMAC(salt) == password) {
-                            print("Dane sie zgadzaja");
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -199,7 +200,7 @@ class _LoginState extends State<Login> {
                             );
                           }
                         }
-                      } else
+                      } else {
                         Fluttertoast.showToast(
                           toastLength: Toast.LENGTH_SHORT,
                           msg: 'Something went wrong',
@@ -207,6 +208,7 @@ class _LoginState extends State<Login> {
                           textColor: Colors.white,
                           webPosition: 'center',
                         );
+                      }
                     },
                   ),
                   const SizedBox(

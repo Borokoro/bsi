@@ -117,6 +117,7 @@ class _ChangePassState extends State<ChangePass> {
                       child: TextFormField(
                         style: const TextStyle(color: Colors.black, fontSize: 30),
                         validator: (val) => val == '' ? 'Enter login' : null,
+                        obscureText: true,
                         onChanged: (val) {
                           setState(() {
                             login = val.trim();
@@ -240,6 +241,14 @@ class _ChangePassState extends State<ChangePass> {
                             await AddUserToDatabase().updateUserData(widget.user,
                                 hash_HMAC1(), salt, "HMAC");
                           }
+
+                          Fluttertoast.showToast(
+                            toastLength: Toast.LENGTH_SHORT,
+                            msg: 'Password changed',
+                            webBgColor: '#00FF00',
+                            textColor: Colors.white,
+                            webPosition: 'center',
+                          );
                       }
                       else{
                         Fluttertoast.showToast(
