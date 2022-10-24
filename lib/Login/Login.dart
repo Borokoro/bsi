@@ -5,6 +5,9 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:bsi/Register/Register.dart';
 import 'package:bsi/Pepper.dart' as variable;
+import 'package:go_router/go_router.dart';
+import 'package:bsi/Router.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -22,6 +25,12 @@ class _LoginState extends State<Login> {
     hashedPass =
         sha512.convert(utf8.encode(pass + salt + variable.pepper)).toString();
     return hashedPass;
+  }
+
+  String hash_HMAC(String salt){
+    String? hashed_pass;
+    hashed_pass=Hmac(sha512, utf8.encode(salt)).convert(utf8.encode(pass + variable.pepper)).toString();
+    return hashed_pass;
   }
 
   @override
@@ -154,23 +163,50 @@ class _LoginState extends State<Login> {
                             await GetUserFromDatabase().getSalt(login);
                         String password =
                             await GetUserFromDatabase().getPass(login);
+                        print(password);
                         if (await GetUserFromDatabase().getWhich(login) ==
                             "sha512") {
                           if (hash_sha512(salt) == password) {
-                            print("Dane sie zgadzaja");
                             // ignore: use_build_context_synchronously
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => LoggedIn(user: login)));
                           } else
-                            print("dane sie nie zgadzaja");
+                            Fluttertoast.showToast(
+                              msg: 'Something went wrong',
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              gravity: ToastGravity.BOTTOM,
+                            );
+
                         }
                         else{
-                          //cos tam na hmac
+                          if (hash_HMAC(salt) == password) {
+                            print("Dane sie zgadzaja");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoggedIn(user: login)));
+                          }
+                          else{
+                            Fluttertoast.showToast(
+                              toastLength: Toast.LENGTH_SHORT,
+                              msg: 'Something went wrong',
+                              webBgColor: '#FF0000',
+                              textColor: Colors.white,
+                              webPosition: 'center',
+                            );
+                          }
                         }
                       } else
-                        print("nie istnieje");
+                        Fluttertoast.showToast(
+                          toastLength: Toast.LENGTH_SHORT,
+                          msg: 'Something went wrong',
+                          webBgColor: '#FF0000',
+                          textColor: Colors.white,
+                          webPosition: 'center',
+                        );
                     },
                   ),
                   const SizedBox(
@@ -201,10 +237,7 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Register()));
+                      context.go('/register');
                     },
                   ),
                 ],

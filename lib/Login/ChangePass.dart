@@ -1,37 +1,68 @@
 import 'dart:convert';
 import 'dart:math';
-
-import 'package:bsi/Firebase/Firebase.dart';
-import 'package:flutter/material.dart';
-import 'package:bsi/Login/Login.dart';
-import 'package:crypto/crypto.dart';
 import 'package:bsi/Pepper.dart' as variable;
+import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:go_router/go_router.dart';
 
-class Register extends StatefulWidget {
-  const Register({Key? key}) : super(key: key);
+import '../Firebase/Firebase.dart';
+import 'LoggedIn.dart';
+
+class ChangePass extends StatefulWidget {
+
+  final String user;
+  const ChangePass({super.key, required this.user});
 
   @override
-  _RegisterState createState() => _RegisterState();
+  State<ChangePass> createState() => _ChangePassState();
 }
 
-class _RegisterState extends State<Register> {
+class _ChangePassState extends State<ChangePass> {
   String login = "";
   String pass = "";
   String salt="";
   bool? first=true, second=false;
-  var passh;
+  String password="";
+  String which="";
+  String passPom="";
 
   String hash_sha512(){
     String? hashed_pass;
-    hashed_pass=sha512.convert(utf8.encode(pass+salt+variable.pepper)).toString();
+    hashed_pass=sha512.convert(utf8.encode(login+salt+variable.pepper)).toString();
     return hashed_pass;
   }
-
+  Future<bool> checkPassword() async{
+    password=await GetUserFromDatabase().getPass(widget.user);
+    which =await GetUserFromDatabase().getWhich(widget.user);
+    salt=await GetUserFromDatabase().getSalt(widget.user);
+    passPom=login;
+    if(which=='sha512'){
+      passPom=hash_sha512();
+    }
+    else{
+      passPom=hash_HMAC();
+    }
+    if(passPom==password) {
+      print('prawda');
+      return true;
+    } else {
+      print('falsz');
+      return false;
+    }
+  }
   String hash_HMAC(){
     String? hashed_pass;
+    hashed_pass=Hmac(sha512, utf8.encode(salt)).convert(utf8.encode(login+variable.pepper)).toString();
+    return hashed_pass;
+  }
+  String hash_HMAC1(){
+    String? hashed_pass;
     hashed_pass=Hmac(sha512, utf8.encode(salt)).convert(utf8.encode(pass+variable.pepper)).toString();
+    return hashed_pass;
+  }
+  String hash_sha5121(){
+    String? hashed_pass;
+    hashed_pass=sha512.convert(utf8.encode(pass+salt+variable.pepper)).toString();
     return hashed_pass;
   }
   String salt_generate(){
@@ -55,7 +86,7 @@ class _RegisterState extends State<Register> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                'Register',
+                'Enter new password',
                 style: TextStyle(
                     fontSize: 40,
                     color: Colors.white,
@@ -69,7 +100,7 @@ class _RegisterState extends State<Register> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Username: ',
+                    'Enter old password: ',
                     style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
@@ -105,7 +136,7 @@ class _RegisterState extends State<Register> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Password: ',
+                    'Enter new password: ',
                     style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
@@ -194,29 +225,29 @@ class _RegisterState extends State<Register> {
                       child: const Align(
                         alignment: Alignment.center,
                         child: Text(
-                          'Sign up',
+                          'Change',
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30),
                         ),
                       ),
                     ),
                     onTap: () async{
-                      if(await GetUserFromDatabase().doesUserExist(login)==false) {
-                        salt = salt_generate();
-                        if (first == true) {
-                          await AddUserToDatabase().setUserData(
-                              login, hash_sha512(), salt, "sha512");
-                        } else if (second == true) {
-                          await AddUserToDatabase().setUserData(login,
-                              hash_HMAC(), salt, "HMAC");
-                        }
+                      if(await checkPassword()==true) {
+                          salt = salt_generate();
+                          if (first == true) {
+                            await AddUserToDatabase().updateUserData(
+                                widget.user, hash_sha5121(), salt, "sha512");
+                          } else if (second == true) {
+                            await AddUserToDatabase().updateUserData(widget.user,
+                                hash_HMAC1(), salt, "HMAC");
+                          }
                       }
                       else{
                         Fluttertoast.showToast(
-                            toastLength: Toast.LENGTH_SHORT,
-                            msg: 'Something went wrong',
-                            webBgColor: '#FF0000',
-                            textColor: Colors.white,
-                            webPosition: 'center',
+                          toastLength: Toast.LENGTH_SHORT,
+                          msg: 'Something went wrong',
+                          webBgColor: '#FF0000',
+                          textColor: Colors.white,
+                          webPosition: 'center',
                         );
                       }
                     },
@@ -237,13 +268,16 @@ class _RegisterState extends State<Register> {
                       child: const Align(
                         alignment: Alignment.center,
                         child: Text(
-                          'Log in',
+                          'Back',
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30),
                         ),
                       ),
                     ),
                     onTap: (){
-                      GoRouter.of(context).go('/login');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoggedIn(user: widget.user)));
                     },
                   ),
                 ],
