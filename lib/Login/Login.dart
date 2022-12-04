@@ -8,7 +8,7 @@ import 'package:bsi/Pepper.dart' as variable;
 import 'package:go_router/go_router.dart';
 import 'package:bsi/Router.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:bsi/Functions/Functions.dart';
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -19,19 +19,8 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String login = "";
   String pass = "";
+  Functions f=Functions();
 
-  String hash_sha512(String salt) {
-    String? hashedPass;
-    hashedPass =
-        sha512.convert(utf8.encode(pass + salt + variable.pepper)).toString();
-    return hashedPass;
-  }
-
-  String hash_HMAC(String salt){
-    String? hashed_pass;
-    hashed_pass=Hmac(sha512, utf8.encode(salt)).convert(utf8.encode(pass + variable.pepper)).toString();
-    return hashed_pass;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +155,7 @@ class _LoginState extends State<Login> {
                         print(password);
                         if (await GetUserFromDatabase().getWhich(login) ==
                             "sha512") {
-                          if (hash_sha512(salt) == password) {
+                          if (f.hashSha512(salt, pass) == password) {
                             // ignore: use_build_context_synchronously
                             Navigator.push(
                                 context,
@@ -184,7 +173,7 @@ class _LoginState extends State<Login> {
 
                         }
                         else{
-                          if (hash_HMAC(salt) == password) {
+                          if (f.hashHMAC(salt, pass) == password) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

@@ -7,7 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Firebase/Firebase.dart';
 import 'LoggedIn.dart';
-
+import 'package:bsi/Functions/Functions.dart';
 class ChangePass extends StatefulWidget {
 
   final String user;
@@ -25,12 +25,8 @@ class _ChangePassState extends State<ChangePass> {
   String password="";
   String which="";
   String passPom="";
+  Functions f=Functions();
 
-  String hash_sha512(){
-    String? hashed_pass;
-    hashed_pass=sha512.convert(utf8.encode(login+salt+variable.pepper)).toString();
-    return hashed_pass;
-  }
   Future<bool> checkPassword() async{
     password=await GetUserFromDatabase().getPass(widget.user);
     which =await GetUserFromDatabase().getWhich(widget.user);
@@ -50,29 +46,8 @@ class _ChangePassState extends State<ChangePass> {
       return false;
     }
   }
-  String hash_HMAC(){
-    String? hashed_pass;
-    hashed_pass=Hmac(sha512, utf8.encode(salt)).convert(utf8.encode(login+variable.pepper)).toString();
-    return hashed_pass;
-  }
-  String hash_HMAC1(){
-    String? hashed_pass;
-    hashed_pass=Hmac(sha512, utf8.encode(salt)).convert(utf8.encode(pass+variable.pepper)).toString();
-    return hashed_pass;
-  }
-  String hash_sha5121(){
-    String? hashed_pass;
-    hashed_pass=sha512.convert(utf8.encode(pass+salt+variable.pepper)).toString();
-    return hashed_pass;
-  }
-  String salt_generate(){
-    Random rnd = Random();
-    String chars =
-        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890!@#%^&*';
-    String randomString = String.fromCharCodes(List.generate(
-        32, (index) => chars.codeUnitAt(rnd.nextInt(chars.length))));
-    return randomString;
-  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +211,7 @@ class _ChangePassState extends State<ChangePass> {
                           salt = salt_generate();
                           if (first == true) {
                             await AddUserToDatabase().updateUserData(
-                                widget.user, hash_sha5121(), salt, "sha512");
+                                widget.user, f.hashSha512(salt,pass), salt, "sha512");
                           } else if (second == true) {
                             await AddUserToDatabase().updateUserData(widget.user,
                                 hash_HMAC1(), salt, "HMAC");
