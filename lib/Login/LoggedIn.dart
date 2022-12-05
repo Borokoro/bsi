@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:bsi/Login/ChangePass.dart';
-import 'package:encrypt/encrypt.dart' as encrypts;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart';
@@ -10,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:bsi/Pepper.dart' as variable;
 import 'package:bsi/Firebase/Firebase.dart';
 import 'package:go_router/go_router.dart';
+import 'package:bsi/Functions/Functions.dart';
 
 class LoggedIn extends StatefulWidget {
   final String user;
@@ -28,6 +28,7 @@ class _LoggedInState extends State<LoggedIn> {
   bool? first = true, second = false;
   Color visible = Colors.red;
   List<bool> passVisible = <bool>[];
+  Functions f = Functions();
 
   @override
   initState() {
@@ -96,20 +97,7 @@ class _LoggedInState extends State<LoggedIn> {
     return randomString;
   }
 
-  String decrypt(int value){
-    var iv=encrypts.IV.fromLength(16);
-    encrypts.Encrypted encrypted=encrypts.Encrypted.from64(pom[value]);
-    var key=encrypts.Key.fromUtf8(salt[value]);
-    var encrypter=encrypts.Encrypter(encrypts.AES(key));
-    return encrypter.decrypt(encrypted, iv: iv);
-  }
 
-  String encrypt(String varPass, String varSalt){
-    var iv=encrypts.IV.fromLength(16);
-    var key=encrypts.Key.fromUtf8(varSalt);
-    var enc=encrypts.Encrypter(encrypts.AES(key));
-    return enc.encrypt(varPass, iv: iv).base64;
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,13 +141,13 @@ class _LoggedInState extends State<LoggedIn> {
                             if(passVisible[a]==false){
                               setState(() {
                                 passVisible[a]=true;
-                                pom[a]=decrypt(a);
+                                pom[a]=f.decrypt(salt[a],pom[a]);
                               });
                             }
                             else{
                               setState(() {
                                 passVisible[a]=false;
-                                pom[a]=encrypt(pom[a],salt[a]);
+                                pom[a]=f.encrypt(pom[a],salt[a]);
                               });
                             }
                           },
@@ -222,7 +210,7 @@ class _LoggedInState extends State<LoggedIn> {
                     onTap: () async {
                       newSalt = salt_generate();
                       salt.add(newSalt);
-                      newPass=encrypt(newPass, newSalt);
+                      newPass=f.encrypt(newPass, newSalt);
                       hashedPass.add(newPass);
                       await AddUserToDatabase().addNewPass(widget.user, hashedPass, salt);
                       for(int a=0; a<passVisible.length;a++){

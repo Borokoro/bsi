@@ -33,10 +33,10 @@ class _ChangePassState extends State<ChangePass> {
     salt=await GetUserFromDatabase().getSalt(widget.user);
     passPom=login;
     if(which=='sha512'){
-      passPom=hash_sha512();
+      passPom=f.hashSha512(salt,login);
     }
     else{
-      passPom=hash_HMAC();
+      passPom=f.hashHMAC(salt,login);
     }
     if(passPom==password) {
       print('prawda');
@@ -208,13 +208,13 @@ class _ChangePassState extends State<ChangePass> {
                     ),
                     onTap: () async{
                       if(await checkPassword()==true) {
-                          salt = salt_generate();
+                          salt = f.salt_generate();
                           if (first == true) {
                             await AddUserToDatabase().updateUserData(
                                 widget.user, f.hashSha512(salt,pass), salt, "sha512");
                           } else if (second == true) {
                             await AddUserToDatabase().updateUserData(widget.user,
-                                hash_HMAC1(), salt, "HMAC");
+                                f.hashHMAC(salt,pass), salt, "HMAC");
                           }
 
                           Fluttertoast.showToast(

@@ -37,6 +37,7 @@ dependencies:
   encrypt: ^5.0.1
   go_router: ^5.1.1
   fluttertoast: ^8.1.1
+  test: any
 
 
   # The following adds the Cupertino Icons font to your application.
