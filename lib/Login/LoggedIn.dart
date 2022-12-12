@@ -10,6 +10,7 @@ import 'package:bsi/Pepper.dart' as variable;
 import 'package:bsi/Firebase/Firebase.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bsi/Functions/Functions.dart';
+import 'Logs.dart';
 
 class LoggedIn extends StatefulWidget {
   final String user;
@@ -255,7 +256,7 @@ class _LoggedInState extends State<LoggedIn> {
                 height: 20,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   GestureDetector(
                     child: Container(
@@ -292,8 +293,40 @@ class _LoggedInState extends State<LoggedIn> {
                               builder: (context) => ChangePass(user: widget.user)));
                     },
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width/4,
+                  GestureDetector(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width/8,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(15)),
+                        color: Colors.transparent,
+                        border: Border.all(
+                          width: 5,
+                          color: Colors.white,
+                        ),
+                      ),
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Column(
+                          children: [
+                            const Text(
+                              'See',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30),
+                            ),
+                            const Text(
+                              'Logs',
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    onTap: (){
+                      showDialog(
+                          context: context,
+                          builder: (context) => Logs(user: widget.user,),
+                      );
+                    },
                   ),
                   GestureDetector(
                     child: Container(
