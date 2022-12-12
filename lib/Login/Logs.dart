@@ -29,6 +29,7 @@ class _LogsState extends State<Logs> {
 
   Future<void> executeFunctions(String user) async{
     attempts=await ip.getIpAdress(user);
+    attempts=attempts.reversed.toList();
     for(int a=0;a<attempts.length;a++){
       final getData=attempts[a].split('/');
       ipList.add(getData[0].toString());

@@ -11,8 +11,6 @@ import 'Router.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  final ipv4 = await Ipify.ipv4();
-  print("hhhhhhhhhhhhhh $ipv4");
   final int time=DateTime.now().hour;
   print(DateTime.now());
   runApp( MaterialApp.router(
