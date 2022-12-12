@@ -120,6 +120,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.5"
+  dart_ipify:
+    dependency: "direct main"
+    description:
+      name: dart_ipify
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1"
   encrypt:
     dependency: "direct main"
     description:

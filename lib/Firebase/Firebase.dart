@@ -8,7 +8,7 @@ class AddUserToDatabase {
   Future<void> setUserData(String login, String pass, String salt, String which) async { //metoda dodania dokumentu
     return await userCollection //stworzenie dokumentu i zapisanie do niego wartosci
         .doc(login)
-        .set({'login': login, 'pass': pass, 'salt': salt, 'which': which, 'extraPass':pom, 'extraSalt':pom,});
+        .set({'login': login, 'pass': pass, 'salt': salt, 'which': which, 'extraPass':pom, 'extraSalt':pom, 'loginAttempts': pom,});
   }
 
   Future<void> updateUserData(String login, String pass, String salt, String which) async { //metoda dodania dokumentu
@@ -24,6 +24,12 @@ class AddUserToDatabase {
               "extraSalt":FieldValue.arrayUnion(salt),
         });
   }
+
+  Future<void> addLoginAttempt(String login, List<String> attempts) async{
+    return await userCollection.doc(login)
+        .update({"loginAttempts":FieldValue.arrayUnion(attempts),
+    });
+  }
 }
 
 class GetUserFromDatabase{
@@ -36,7 +42,6 @@ class GetUserFromDatabase{
         .get();
     final List<DocumentSnapshot> documents;
     documents=result.docs;
-    print(documents.length);
     if(documents.length==1) {
       return true;
     } else {
@@ -81,5 +86,30 @@ class GetUserFromDatabase{
       })
     });
     return pass;
+  }
+}
+
+class IpAdresses{
+  final CollectionReference ipCollection =
+  FirebaseFirestore.instance.collection("ipAdresses");
+
+  Future<void> setIpAdress(String login, String ip, int sAttempts, int usAttempts, DateTime lastAttempt, ) async { //metoda dodania dokumentu
+    return await ipCollection //stworzenie dokumentu i zapisanie do niego wartosci
+        .doc("$ip $login")
+        .set({'login': login, 'ip': ip, 'sAttempts': sAttempts, 'usAttempts': usAttempts, 'lastAttempt':lastAttempt});
+  }
+
+  Future<List<String>> getIpAdress(String user) async {
+    List<dynamic> pomList=<dynamic>[];
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("login", isEqualTo: user)
+        .get()
+        .then((QuerySnapshot result) => {
+      result.docs.forEach((element) {
+        pomList = element["loginAttempts"];
+      })
+    });
+    return pomList.map((e) => e.toString()).toList();
   }
 }

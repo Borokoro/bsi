@@ -20,6 +20,10 @@ class Routers{
         path:'/',
       builder: (context, state) => const Login(),
     ),
+    GoRoute(
+      path:'/login/logs',
+      builder: (context, state) => const Login(),
+    ),
   ],
   );
 }
