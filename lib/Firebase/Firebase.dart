@@ -93,10 +93,38 @@ class IpAdresses{
   final CollectionReference ipCollection =
   FirebaseFirestore.instance.collection("ipAdresses");
 
-  Future<void> setIpAdress(String login, String ip, int sAttempts, int usAttempts, DateTime lastAttempt, ) async { //metoda dodania dokumentu
+  Future<void> setIpAdress(String ip, int sAttempts, int usAttempts, DateTime lastAttempt, ) async { //metoda dodania dokumentu
     return await ipCollection //stworzenie dokumentu i zapisanie do niego wartosci
-        .doc("$ip $login")
-        .set({'login': login, 'ip': ip, 'sAttempts': sAttempts, 'usAttempts': usAttempts, 'lastAttempt':lastAttempt});
+        .doc(ip)
+        .set({'ip': ip, 'sAttempts': sAttempts, 'usAttempts': usAttempts, 'lastAttempt':lastAttempt});
+  }
+
+  Future<DateTime> getLastAttempt(String unickId) async{
+    late DateTime pom;
+    await FirebaseFirestore.instance
+        .collection("ipAdresses")
+        .where("ip", isEqualTo: unickId)
+        .get()
+        .then((QuerySnapshot result) => {
+      result.docs.forEach((element) {
+        pom=element["lastAttempt"];
+      })
+    });
+    return pom;
+  }
+
+  Future<int> getUsAteempts(String unickId) async{
+    late int pom;
+    await FirebaseFirestore.instance
+        .collection("ipAdresses")
+        .where("ip", isEqualTo: unickId)
+        .get()
+        .then((QuerySnapshot result) => {
+      result.docs.forEach((element) {
+        pom=element["usAttempts"];
+      })
+    });
+    return pom;
   }
 
   Future<List<String>> getIpAdress(String user) async {
@@ -111,5 +139,11 @@ class IpAdresses{
       })
     });
     return pomList.map((e) => e.toString()).toList();
+  }
+
+  Future<void> updateAttempts(int attempts, String ip) async{
+    return await ipCollection.doc(ip)
+        .update({"usAttempts":attempts,
+    });
   }
 }

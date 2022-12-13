@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:dart_ipify/dart_ipify.dart';
-
+import 'package:time/time.dart';
 import 'LoggedIn.dart';
 import 'package:bsi/Firebase/Firebase.dart';
 import 'package:crypto/crypto.dart';
@@ -27,9 +27,13 @@ class _LoginState extends State<Login> {
   IpAdresses ip = IpAdresses();
   String ipv4="nie";
   late DateTime date;
+  late DateTime dateFromBase;
+  late int usAttempts;
+  bool isUserBlocker=false;
 
-  Future<void> executeFunctions() async{
-    //tu bedzie aitomatyczne pobieranie danych o ip z bazy danych
+  Future<void> getData() async{
+    dateFromBase=await ip.getLastAttempt(ipv4);
+    usAttempts=await ip.getUsAteempts(ipv4);
   }
 
 
@@ -159,9 +163,11 @@ class _LoginState extends State<Login> {
                           ),
                           onTap: () async {
                             ipv4 = await Ipify.ipv4();
+                            await getData();
                             bool userExist = await GetUserFromDatabase()
                                 .doesUserExist(login);
                             if (userExist == true) {
+                              attempts = await ip.getIpAdress(login);
                               String salt =
                                   await GetUserFromDatabase().getSalt(login);
                               String password =
@@ -169,7 +175,8 @@ class _LoginState extends State<Login> {
                               if (await GetUserFromDatabase().getWhich(login) ==
                                   "sha512") {
                                 if (f.hashSha512(salt, pass) == password) {
-                                  attempts = await ip.getIpAdress(login);
+                                  usAttempts=0;
+                                  await ip.updateAttempts(usAttempts, ipv4);
                                   date = DateTime.now();
                                   attempts.add("${ipv4}/${date}/true");
                                   attempts = attempts.reversed.toList();
@@ -180,7 +187,8 @@ class _LoginState extends State<Login> {
                                           builder: (context) =>
                                               LoggedIn(user: login)));
                                 } else {
-                                  attempts = await ip.getIpAdress(login);
+                                  usAttempts++;
+                                  await ip.updateAttempts(usAttempts, ipv4);
                                   date = DateTime.now();
                                   attempts.add("${ipv4}/${date}/false");
                                   attempts = attempts.reversed.toList();
@@ -195,7 +203,8 @@ class _LoginState extends State<Login> {
                                 }
                               } else {
                                 if (f.hashHMAC(salt, pass) == password) {
-                                  attempts = await ip.getIpAdress(login);
+                                  usAttempts=0;
+                                  await ip.updateAttempts(usAttempts, ipv4);
                                   date = DateTime.now();
                                   attempts.add("${ipv4}/${date}/true");
                                   attempts = attempts.reversed.toList();
@@ -206,7 +215,8 @@ class _LoginState extends State<Login> {
                                           builder: (context) =>
                                               LoggedIn(user: login)));
                                 } else {
-                                  attempts = await ip.getIpAdress(login);
+                                  usAttempts;
+                                  await ip.updateAttempts(usAttempts, ipv4);
                                   date = DateTime.now();
                                   attempts.add("${ipv4}/${date}/false");
                                   attempts = attempts.reversed.toList();
