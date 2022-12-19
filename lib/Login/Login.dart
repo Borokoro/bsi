@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:bsi/Login/UserBlocade.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dart_ipify/dart_ipify.dart';
 import 'package:time/time.dart';
 import 'LoggedIn.dart';
@@ -19,6 +21,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  late Timestamp time;
   String login = "";
   String pass = "";
   List<String> attempts=<String>[];
@@ -32,7 +35,6 @@ class _LoginState extends State<Login> {
   bool isUserBlocker=false;
 
   Future<void> getData() async{
-    dateFromBase=await ip.getLastAttempt(ipv4);
     usAttempts=await ip.getUsAteempts(ipv4);
   }
 
@@ -163,82 +165,96 @@ class _LoginState extends State<Login> {
                           ),
                           onTap: () async {
                             ipv4 = await Ipify.ipv4();
+                            if(await ip.doesIpExist(ipv4)==false){
+                              await ip.setIpAdress(ipv4, 0);
+                            }
                             await getData();
-                            bool userExist = await GetUserFromDatabase()
-                                .doesUserExist(login);
-                            if (userExist == true) {
-                              attempts = await ip.getIpAdress(login);
-                              String salt =
-                                  await GetUserFromDatabase().getSalt(login);
-                              String password =
-                                  await GetUserFromDatabase().getPass(login);
-                              if (await GetUserFromDatabase().getWhich(login) ==
-                                  "sha512") {
-                                if (f.hashSha512(salt, pass) == password) {
-                                  usAttempts=0;
-                                  await ip.updateAttempts(usAttempts, ipv4);
-                                  date = DateTime.now();
-                                  attempts.add("${ipv4}/${date}/true");
-                                  attempts = attempts.reversed.toList();
-                                  await add.addLoginAttempt(login, attempts);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              LoggedIn(user: login)));
+                            if(usAttempts < 4) {
+                              bool userExist =
+                              await GetUserFromDatabase().doesUserExist(login);
+                              if (userExist == true) {
+                                attempts = await ip.getIpAdress(login);
+                                String salt =
+                                await GetUserFromDatabase().getSalt(login);
+                                String password =
+                                await GetUserFromDatabase().getPass(login);
+                                if (await GetUserFromDatabase().getWhich(
+                                    login) ==
+                                    "sha512") {
+                                  if (f.hashSha512(salt, pass) == password) {
+                                    usAttempts = 0;
+                                    await ip.updateAttempts(usAttempts, ipv4);
+                                    date = DateTime.now();
+                                    attempts.add("${ipv4}/${date}/true");
+                                    attempts = attempts.reversed.toList();
+                                    await add.addLoginAttempt(login, attempts);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                LoggedIn(user: login)));
+                                  } else {
+                                    usAttempts++;
+                                    await ip.updateAttempts(usAttempts, ipv4);
+                                    date = DateTime.now();
+
+                                    attempts.add("${ipv4}/${date}/false");
+                                    attempts = attempts.reversed.toList();
+                                    await add.addLoginAttempt(login, attempts);
+                                    Fluttertoast.showToast(
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      msg: 'Something went wrong',
+                                      webBgColor: '#FF0000',
+                                      textColor: Colors.white,
+                                      webPosition: 'center',
+                                    );
+                                  }
                                 } else {
-                                  usAttempts++;
-                                  await ip.updateAttempts(usAttempts, ipv4);
-                                  date = DateTime.now();
-                                  attempts.add("${ipv4}/${date}/false");
-                                  attempts = attempts.reversed.toList();
-                                  await add.addLoginAttempt(login, attempts);
-                                  Fluttertoast.showToast(
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    msg: 'Something went wrong',
-                                    webBgColor: '#FF0000',
-                                    textColor: Colors.white,
-                                    webPosition: 'center',
-                                  );
+                                  if (f.hashHMAC(salt, pass) == password) {
+                                    usAttempts = 0;
+                                    await ip.updateAttempts(usAttempts, ipv4);
+                                    date = DateTime.now();
+                                    attempts.add("${ipv4}/${date}/true");
+                                    attempts = attempts.reversed.toList();
+                                    await add.addLoginAttempt(login, attempts);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                LoggedIn(user: login)));
+                                  } else {
+                                    usAttempts++;
+                                    await ip.updateAttempts(usAttempts, ipv4);
+                                    date = DateTime.now();
+                                    attempts.add("${ipv4}/${date}/false");
+                                    attempts = attempts.reversed.toList();
+                                    await add.addLoginAttempt(login, attempts);
+                                    Fluttertoast.showToast(
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      msg: 'Something went wrong',
+                                      webBgColor: '#FF0000',
+                                      textColor: Colors.white,
+                                      webPosition: 'center',
+                                    );
+                                  }
                                 }
                               } else {
-                                if (f.hashHMAC(salt, pass) == password) {
-                                  usAttempts=0;
-                                  await ip.updateAttempts(usAttempts, ipv4);
-                                  date = DateTime.now();
-                                  attempts.add("${ipv4}/${date}/true");
-                                  attempts = attempts.reversed.toList();
-                                  await add.addLoginAttempt(login, attempts);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              LoggedIn(user: login)));
-                                } else {
-                                  usAttempts;
-                                  await ip.updateAttempts(usAttempts, ipv4);
-                                  date = DateTime.now();
-                                  attempts.add("${ipv4}/${date}/false");
-                                  attempts = attempts.reversed.toList();
-                                  await add.addLoginAttempt(login, attempts);
-                                  Fluttertoast.showToast(
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    msg: 'Something went wrong',
-                                    webBgColor: '#FF0000',
-                                    textColor: Colors.white,
-                                    webPosition: 'center',
-                                  );
-                                }
+                                Fluttertoast.showToast(
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  msg: 'Something went wrong',
+                                  webBgColor: '#FF0000',
+                                  textColor: Colors.white,
+                                  webPosition: 'center',
+                                );
                               }
-                            } else {
-                              Fluttertoast.showToast(
-                                toastLength: Toast.LENGTH_SHORT,
-                                msg: 'Something went wrong',
-                                webBgColor: '#FF0000',
-                                textColor: Colors.white,
-                                webPosition: 'center',
-                              );
                             }
+                        if(usAttempts>=2){
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (context) => UserBlocade(usAttempts: usAttempts,),
+                                );
+                              }
                           },
                         ),
                         const SizedBox(

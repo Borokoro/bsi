@@ -44,56 +44,64 @@ class _LogsState extends State<Logs> {
   }
   Widget everything(BuildContext context){
     print(ipList.length);
-    return ListView(
+    return Column(
       children: [
-        for(int a=0;a<attempts.length;a++)
-          Container(
-            height: MediaQuery.of(context).size.height/14,
-            width: MediaQuery.of(context).size.width/10,
-            decoration: BoxDecoration(
-              color: successful[a]==true ? Colors.green : Colors.red,
-              border: Border.all(
-                width: 2,
-                color: Colors.black,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                //const SizedBox(width: 0.1),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      ipList[a],
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+        Container(
+          width: MediaQuery.of(context).size.height/2,
+          height: (MediaQuery.of(context).size.height/14)*4,
+          child: ListView(
+            children: [
+              for(int a=0;a<attempts.length;a++)
+                Container(
+                  height: MediaQuery.of(context).size.height/14,
+                  width: MediaQuery.of(context).size.width/10,
+                  decoration: BoxDecoration(
+                    color: successful[a]==true ? Colors.green : Colors.red,
+                    border: Border.all(
+                      width: 2,
+                      color: Colors.black,
                     ),
-                    Text(
-                      date[a].toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //const SizedBox(width: 0.1),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            ipList[a],
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            date[a].toString(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                Text(
-                  successful[a]==true ? 'successful' : 'unsucessfull',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                      Text(
+                        successful[a]==true ? 'successful' : 'unsucessfull',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                     // const SizedBox(width: 1,),
+                    ],
                   ),
                 ),
-               // const SizedBox(width: 1,),
-              ],
-            ),
+              const SizedBox(
+                height: 20,
+              ),
+            ],
           ),
-        const SizedBox(
-          height: 20,
         ),
         ElevatedButton(
           onPressed: (){

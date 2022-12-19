@@ -8,7 +8,7 @@ class AddUserToDatabase {
   Future<void> setUserData(String login, String pass, String salt, String which) async { //metoda dodania dokumentu
     return await userCollection //stworzenie dokumentu i zapisanie do niego wartosci
         .doc(login)
-        .set({'login': login, 'pass': pass, 'salt': salt, 'which': which, 'extraPass':pom, 'extraSalt':pom, 'loginAttempts': pom,});
+        .set({'login': login, 'pass': pass, 'salt': salt, 'which': which, 'extraPass':pom, 'extraSalt':pom, 'loginAttempts': pom, 'blockedIp':pom,});
   }
 
   Future<void> updateUserData(String login, String pass, String salt, String which) async { //metoda dodania dokumentu
@@ -93,14 +93,14 @@ class IpAdresses{
   final CollectionReference ipCollection =
   FirebaseFirestore.instance.collection("ipAdresses");
 
-  Future<void> setIpAdress(String ip, int sAttempts, int usAttempts, DateTime lastAttempt, ) async { //metoda dodania dokumentu
+  Future<void> setIpAdress(String ip, int usAttempts) async { //metoda dodania dokumentu
     return await ipCollection //stworzenie dokumentu i zapisanie do niego wartosci
         .doc(ip)
-        .set({'ip': ip, 'sAttempts': sAttempts, 'usAttempts': usAttempts, 'lastAttempt':lastAttempt});
+        .set({'ip': ip, 'usAttempts': usAttempts,});
   }
 
-  Future<DateTime> getLastAttempt(String unickId) async{
-    late DateTime pom;
+  Future<Timestamp> getLastAttempt(String unickId) async{
+    late Timestamp pom;
     await FirebaseFirestore.instance
         .collection("ipAdresses")
         .where("ip", isEqualTo: unickId)
@@ -145,5 +145,20 @@ class IpAdresses{
     return await ipCollection.doc(ip)
         .update({"usAttempts":attempts,
     });
+  }
+
+  Future<bool> doesIpExist(String ip) async{
+    final QuerySnapshot result=await FirebaseFirestore.instance
+        .collection("ipAdresses")
+        .where("ip", isEqualTo: ip)
+        .limit(1)
+        .get();
+    final List<DocumentSnapshot> documents;
+    documents=result.docs;
+    if(documents.length==1) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
