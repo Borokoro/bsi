@@ -57,6 +57,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  captcha_solver:
+    dependency: "direct main"
+    description:
+      name: captcha_solver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   characters:
     dependency: transitive
     description:
@@ -188,6 +195,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_number_captcha:
+    dependency: "direct main"
+    description:
+      name: flutter_number_captcha
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.8"
   flutter_test:
     dependency: "direct dev"
     description: flutter
