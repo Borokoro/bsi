@@ -86,8 +86,8 @@ class _UserBlocadeState extends State<UserBlocade> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Lottie.network('https://assets1.lottiefiles.com/packages/lf20_pnycfvl3.json',
-              width: 200,
-              height: 200,
+              width: 150,
+              height: 150,
               frameRate: FrameRate.max,
               fit: BoxFit.fitHeight,
             ),
@@ -146,8 +146,8 @@ class _UserBlocadeState extends State<UserBlocade> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.network('https://assets1.lottiefiles.com/packages/lf20_pnycfvl3.json',
-              width: 200,
-              height: 200,
+              width: 150,
+              height: 150,
               frameRate: FrameRate.max,
               fit: BoxFit.fitHeight,
             ),
