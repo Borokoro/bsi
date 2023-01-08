@@ -114,10 +114,13 @@ class _LoginState extends State<Login> {
                         ),
                         Expanded(
                           child: Container(
+                            width: 100,
+                            height: 50,
                             decoration: const BoxDecoration(
                               color: Colors.white,
                             ),
                             child: TextFormField(
+
                               obscureText: true,
                               style: const TextStyle(
                                   color: Colors.black, fontSize: 30),

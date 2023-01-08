@@ -8,7 +8,8 @@ class AddUserToDatabase {
   Future<void> setUserData(String login, String pass, String salt, String which) async { //metoda dodania dokumentu
     return await userCollection //stworzenie dokumentu i zapisanie do niego wartosci
         .doc(login)
-        .set({'login': login, 'pass': pass, 'salt': salt, 'which': which, 'extraPass':pom, 'extraSalt':pom, 'loginAttempts': pom, 'blockedIp':pom,});
+        .set({'login': login, 'pass': pass, 'salt': salt, 'which': which, 'extraPass':pom, 'extraSalt':pom, 'loginAttempts': pom, 'blockedIp':pom,
+    'editAttempts':pom,'deleteAttempts':pom, 'changeAttempts':pom, 'shareAttempts':pom,});
   }
 
   Future<void> updateUserData(String login, String pass, String salt, String which) async { //metoda dodania dokumentu
@@ -25,11 +26,39 @@ class AddUserToDatabase {
         });
   }
 
+  Future<void> changePass(String login, List<String> pass, List<String> salt) async{
+    return await userCollection.doc(login)
+        .update({"extraPass":pass,
+      "extraSalt":salt,
+    });
+  }
+
   Future<void> addLoginAttempt(String login, List<String> attempts) async{
     return await userCollection.doc(login)
         .update({"loginAttempts":FieldValue.arrayUnion(attempts),
     });
   }
+  Future<void> addEditAttempt(String login, List<String> attempts) async{
+    return await userCollection.doc(login)
+        .update({"editAttempts":FieldValue.arrayUnion(attempts),
+    });
+  }
+  Future<void> addDeleteAttempt(String login, List<String> attempts) async{
+    return await userCollection.doc(login)
+        .update({"deleteAttempts":FieldValue.arrayUnion(attempts),
+    });
+  }
+  Future<void> addAddAttempt(String login, List<String> attempts) async{
+    return await userCollection.doc(login)
+        .update({"changeAttempts":FieldValue.arrayUnion(attempts),
+    });
+  }
+  Future<void> addShareAttempt(String login, List<String> attempts) async{
+    return await userCollection.doc(login)
+        .update({"shareAttempts":FieldValue.arrayUnion(attempts),
+    });
+  }
+
 }
 
 class GetUserFromDatabase{
@@ -87,6 +116,59 @@ class GetUserFromDatabase{
     });
     return pass;
   }
+
+  Future<List<String>> getShare(String user) async {
+    List<dynamic> pomList=<dynamic>[];
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("login", isEqualTo: user)
+        .get()
+        .then((QuerySnapshot result) => {
+      result.docs.forEach((element) {
+        pomList = element["shareAttempts"];
+      })
+    });
+    return pomList.map((e) => e.toString()).toList();
+  }
+  Future<List<String>> getEdit(String user) async {
+    List<dynamic> pomList=<dynamic>[];
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("login", isEqualTo: user)
+        .get()
+        .then((QuerySnapshot result) => {
+      result.docs.forEach((element) {
+        pomList = element["editAttempts"];
+      })
+    });
+    return pomList.map((e) => e.toString()).toList();
+  }
+  Future<List<String>> getDelete(String user) async {
+    List<dynamic> pomList=<dynamic>[];
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("login", isEqualTo: user)
+        .get()
+        .then((QuerySnapshot result) => {
+      result.docs.forEach((element) {
+        pomList = element["deleteAttempts"];
+      })
+    });
+    return pomList.map((e) => e.toString()).toList();
+  }
+  Future<List<String>> getAdd(String user) async {
+    List<dynamic> pomList=<dynamic>[];
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("login", isEqualTo: user)
+        .get()
+        .then((QuerySnapshot result) => {
+      result.docs.forEach((element) {
+        pomList = element["changeAttempts"];
+      })
+    });
+    return pomList.map((e) => e.toString()).toList();
+  }
 }
 
 class IpAdresses{
@@ -97,20 +179,6 @@ class IpAdresses{
     return await ipCollection //stworzenie dokumentu i zapisanie do niego wartosci
         .doc(ip)
         .set({'ip': ip, 'usAttempts': usAttempts,});
-  }
-
-  Future<Timestamp> getLastAttempt(String unickId) async{
-    late Timestamp pom;
-    await FirebaseFirestore.instance
-        .collection("ipAdresses")
-        .where("ip", isEqualTo: unickId)
-        .get()
-        .then((QuerySnapshot result) => {
-      result.docs.forEach((element) {
-        pom=element["lastAttempt"];
-      })
-    });
-    return pom;
   }
 
   Future<int> getUsAteempts(String unickId) async{
