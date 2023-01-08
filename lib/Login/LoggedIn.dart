@@ -246,12 +246,12 @@ class _LoggedInState extends State<LoggedIn> {
                             await db.addEditAttempt(widget.user, Variables.attemptsEdit);
                             String pomocnicza=Variables.hashedPass[a];
                             Variables.hashedPass[a]='${f.encrypt(getValue!, Variables.salt[a])}#$pomocnicza#${Variables.passHistoryList[a]}';
-                            //print(Variables.hashedPass[a]);
                             pom[a]=Variables.hashedPass[a];
                             getter[a]=Variables.hashedPass[a];
                             await AddUserToDatabase().changePass(widget.user, getter, Variables.salt);
                             await getHashedPass();
                             setState(() {
+                              passVisible[a]=false;
                             });
                           } : (){
                             Fluttertoast.showToast(
@@ -283,11 +283,12 @@ class _LoggedInState extends State<LoggedIn> {
                             Variables.hashedPass.removeAt(a);
                             pom.removeAt(a);
                             Variables.salt.removeAt(a);
+                            passVisible.removeAt(a);
                             await AddUserToDatabase().changePass(widget.user, Variables.hashedPass, Variables.salt);
                             ipv4 = await Ipify.ipv4();
                             date = DateTime.now();
                             attemptsDelete.add('$ipv4/$date');
-                            await db.addDeleteAttempt(widget.user, Variables.attemptsEdit);
+                            await db.addDeleteAttempt(widget.user, attemptsDelete);
                             setState(() {
                             });
                           } : (){
@@ -651,6 +652,10 @@ class _LoggedInState extends State<LoggedIn> {
                   ),
                 ),
                 onTap: () {
+                  Variables.passHistoryList=<String>[];
+                  Variables.hashedPass=<String>[];
+                  Variables.salt=<String>[];
+                  Variables.attemptsEdit=<String>[];
                   GoRouter.of(context).push('/');
                 },
               ),
