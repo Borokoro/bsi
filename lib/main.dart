@@ -12,9 +12,10 @@ import 'Router.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ErrorWidget.builder = (FlutterErrorDetails details) =>
+      const Center(child: CircularProgressIndicator());
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final int time=DateTime.now().hour;
-  print(DateTime.now());
   runApp( MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: Routers().router,

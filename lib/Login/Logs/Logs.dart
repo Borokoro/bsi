@@ -119,7 +119,7 @@ class _LogsState extends State<Logs> {
               var width = MediaQuery.of(context).size.width;
               return Container(
                 width: width/3,
-                height: height/2.5,
+                height: height/2,
                 child: Column(
                   children: [
                     Row(

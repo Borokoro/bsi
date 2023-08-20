@@ -54,7 +54,6 @@ class _LoggedInState extends State<LoggedIn> {
 
   @override
   initState() {
-    print('i ja tez');
     executeFunctions();
     super.initState();
   }
@@ -250,8 +249,11 @@ class _LoggedInState extends State<LoggedIn> {
                             getter[a]=Variables.hashedPass[a];
                             await AddUserToDatabase().changePass(widget.user, getter, Variables.salt);
                             await getHashedPass();
+                            for(int b=0; b<passVisible.length;b++){
+                              passVisible[b]=false;
+                            }
                             setState(() {
-                              passVisible[a]=false;
+
                             });
                           } : (){
                             Fluttertoast.showToast(
@@ -559,20 +561,21 @@ class _LoggedInState extends State<LoggedIn> {
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Text(
                           'Change',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 30),
+                              fontSize: 20),
                         ),
                         Text(
                           'Password',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 30),
+                              fontSize: 20),
                         ),
                       ],
                     ),
@@ -600,20 +603,21 @@ class _LoggedInState extends State<LoggedIn> {
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Text(
                           'See',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 30),
+                              fontSize: 20),
                         ),
                         Text(
                           'Logs',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
-                              fontSize: 30),
+                              fontSize: 20),
                         ),
                       ],
                     ),
@@ -647,7 +651,7 @@ class _LoggedInState extends State<LoggedIn> {
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
-                          fontSize: 30),
+                          fontSize: 20),
                     ),
                   ),
                 ),
